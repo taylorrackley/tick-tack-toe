@@ -1,0 +1,82 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Tick Tack Toe</title>
+    <style>
+        table {border-spacing: 20px;}
+        td {width: 100px; height: 100px; background-color: black; cursor: pointer;}
+    </style>
+  </head>
+
+  <body>
+
+    <div id="names">
+        <h3 id="self"></h3>
+        <h3 id="opponent"></h3>
+    </div>
+
+    <form action="" method="post">
+      <label>Name</label>
+      <input id="username" type="text" name="username"/>
+      <input type="submit">
+    </form>
+
+    <table style="display:none;">
+      <tr>
+        <td id="1"></td>
+        <td id="2"></td>
+        <td id="3"></td>
+      </tr>
+      <tr>
+        <td id="4"></td>
+        <td id="5"></td>
+        <td id="6"></td>
+      </tr>
+      <tr>/
+        <td id="7"></td>
+        <td id="8"></td>
+        <td id="9"></td>
+      </tr>
+    </table>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+
+      var username = '';
+      var opponent = '';
+      var room = null;
+
+      $(function () {
+
+        $('table').hide();
+
+        var socket = io();
+
+        $('td').click(function() {
+          socket.emit('box-click', $(this).attr('id'));
+        });
+        $('form').submit(function() {
+          username = $('#username').val();
+          socket.emit('login', {'username' : username} );
+          return false;
+        });
+        socket.on('box-click', function(id) {
+          $('body').find('#'+id).css("background-color", "yellow");
+           $('body').append("POO");
+        });
+        socket.on('load', function() {
+          $('form').hide();
+          $('table').show();
+        });
+        socket.on('game-join', function(data) {
+            opponent = data.name;
+            room = data.room;
+            $('#self').text(username);
+            $('#opponent').text(opponent);
+        });
+      });
+    </script>
+
+  </body>
+</html>

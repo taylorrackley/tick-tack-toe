@@ -1,0 +1,29 @@
+<html>
+    <head>
+        <title>Login</title>
+    </head>
+    <body>
+
+        <form action="" method="post">
+            <label>Name</label>
+            <input id="username" type="text" name="username"/>
+            <input type="submit">
+        </form>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+        <script>
+          $(function () {
+            var socket = io();
+            $('form').submit(function() {
+              socket.emit('login', {'username' : $('#username').val()} );
+              return false;
+            });
+            socket.on('redirect', function(location) {
+                window.location.href = location;
+            });
+          });
+        </script>
+
+    </body>
+</html>
