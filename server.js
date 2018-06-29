@@ -32,7 +32,25 @@ var findOpponent = function(socket) {
     }
 }
 
-var checkForWin = function() {
+var checkForWin = function(blocks) {
+    for(var i = 0; i < 9; i += 3) {
+        if(blocks[0+i] == blocks[1+i] && blocks[1+i] == blocks[2+i]) {
+            return blocks[0+i];
+        }
+    }
+    for(var i = 0; i < 3; i++) {
+        if(blocks[0+i] == blocks[3+i] && blocks[3+i] == blocks[6+i]) {
+            return blocks[0+i];
+        }
+    }
+    if(blocks[0] == blocks[4] && blocks[4] == blocks[8]) {
+        return blocks[4];
+    }
+    else if(blocks[2] == blocks[4] && blocks[4] == blocks[6]) {
+        return blocks[4];
+    }
+
+    return false;
 
 }
 
@@ -58,7 +76,10 @@ io.on('connection', function(socket) {
                 tempRoom.blocks[data.box_id-1] = symbols[socket.id];
                 rooms[data.room_id].active_player = data.room_id.replace(socket.id, '').replace('#', '');
                 io.to(data.room_id).emit('box-click', {'box_id' : data.box_id, 'symbol' : symbols[socket.id]});
-                checkForWin();
+                var result = checkForWin(tempRoom.blocks);
+                if(result == symbols[socket.id]) {
+                    io.to(data.room_id).emit('game-win', {'winner' : socket.id });
+                }
             }
         }
 

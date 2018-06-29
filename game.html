@@ -89,6 +89,14 @@
             $('#opponent').text(opponent);
         });
 
+        socket.on('game-win', function(data) {
+            if(socket.id == data.winner) {
+                alert("You Won!");
+            } else {
+                alert("You Lost!");
+            }
+        });
+
       });
     </script>
 
