@@ -1,6 +1,10 @@
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var path = require('path').join(__dirname, '/public');
+
+app.use(express.static(path));
 
 queue = [];
 names = {};
@@ -56,7 +60,7 @@ var checkForWin = function(blocks) {
 }
 
 app.get('/', function(req, res) {
-    res.sendFile(__dirname + '/game.html');
+    res.sendFile('game.html', {root: path});
 });
 
 io.on('connection', function(socket) {
