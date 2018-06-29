@@ -45,7 +45,7 @@
 
       var username = '';
       var opponent = '';
-      var room = null;
+      var room_id = '';
 
       $(function () {
 
@@ -53,28 +53,42 @@
 
         var socket = io();
 
+        // user clicked box
         $('td').click(function() {
-          socket.emit('box-click', $(this).attr('id'));
+          console.log($(this).attr('id')+" : "+room_id);
+          socket.emit('box-click', {'box_id' : $(this).attr('id'), 'room_id' : room_id});
         });
+
         $('form').submit(function() {
           username = $('#username').val();
           socket.emit('login', {'username' : username} );
           return false;
         });
-        socket.on('box-click', function(id) {
-          $('body').find('#'+id).css("background-color", "yellow");
-           $('body').append("POO");
-        });
+
+        // User logged in and load game
         socket.on('load', function() {
           $('form').hide();
           $('table').show();
         });
+
+        // box has been clicked
+        socket.on('box-click', function(data) {
+            console.log("box changed: "+data.box_id);
+            var color = '';
+            if(data.symbol == 1) { color = 'yellow'; }
+            else if(data.symbol == 2) { color = 'red'; }
+
+            $('body').find('#'+data.box_id).css("background-color", color);
+        });
+
+        // User joins game against oppenent
         socket.on('game-join', function(data) {
             opponent = data.name;
-            room = data.room;
+            room_id = data.room_id;
             $('#self').text(username);
             $('#opponent').text(opponent);
         });
+
       });
     </script>
 

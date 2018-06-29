@@ -5,26 +5,35 @@ var io = require('socket.io')(http);
 queue = [];
 names = {};
 rooms = {};
-users = {};
+symbols = {};
 
 var findOpponent = function(socket) {
-    console.log(queue);
+    //console.log(queue);
     if(queue.length > 0) {
         var oppenent = queue.pop();
-        var room = socket.id+'#'+peer.id;
+        var blocks = [0, 0, 0, 0, 0, 0, 0, 0, 0];
+        var room_id = socket.id+'#'+oppenent.id;
+        var room = {'blocks' : blocks, 'active_player' : oppenent.id};
 
-        peer.join(room);
-        socket.join(room);
+        oppenent.join(room_id);
+        socket.join(room_id);
 
-        rooms[peer.id] = room;
-        rooms[socket.id] = room;
+        rooms[room_id] = room;
+        rooms[room_id] = room;
 
-        peer.emit('game-join', {'name' : names[socket.id], 'room' : room});
-        socket.emit('game-join', {'name' : names[peer.id], 'room' : room});
+        symbols[oppenent.id] = 1;
+        symbols[socket.id] = 2;
+
+        oppenent.emit('game-join', {'name' : names[socket.id], 'room_id' : room_id});
+        socket.emit('game-join', {'name' : names[oppenent.id], 'room_id' : room_id});
 
     } else {
         queue.push(socket);
     }
+}
+
+var checkForWin = function() {
+
 }
 
 app.get('/', function(req, res) {
@@ -36,15 +45,23 @@ io.on('connection', function(socket) {
         console.log("Username: "+data.username+" : Socket: "+socket.id);
 
         names[socket.id] = data.username;
-        users[socket.id] = socket;
 
         io.emit('load');
 
         findOpponent(socket);
-
     });
-    socket.on('box-click', function(id) {
-        io.emit('box-click', id);
+    socket.on('box-click', function(data) {
+        console.log("Box has been clicked : "+data.box_id);
+        var tempRoom = rooms[data.room_id];
+        if(socket.id == tempRoom.active_player) {
+            if(tempRoom.blocks[data.box_id-1] == 0) {
+                tempRoom.blocks[data.box_id-1] = symbols[socket.id];
+                rooms[data.room_id].active_player = data.room_id.replace(socket.id, '').replace('#', '');
+                io.to(data.room_id).emit('box-click', {'box_id' : data.box_id, 'symbol' : symbols[socket.id]});
+                checkForWin();
+            }
+        }
+
     });
 });
 
