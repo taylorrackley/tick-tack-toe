@@ -1,43 +1,77 @@
-<!doctype html>
-<html>
-  <head>
-    <title>Tick Tack Toe</title>
-    <style>
-        table {border-spacing: 20px;}
-        td {width: 100px; height: 100px; background-color: black; cursor: pointer;}
-    </style>
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Taylo Rackley">
 
-  <body>
+        <title>Tick Tack Toe</title>
 
-    <div id="names">
-        <h3 id="self"></h3>
-        <h3 id="opponent"></h3>
-    </div>
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 
-    <form action="" method="post">
-      <label>Name</label>
-      <input id="username" type="text" name="username"/>
-      <input type="submit">
-    </form>
+        <!-- Custom styles for this template -->
+        <link href="css/styles.css" rel="stylesheet" type="text/css">
 
-    <table style="display:none;">
-      <tr>
-        <td id="1"></td>
-        <td id="2"></td>
-        <td id="3"></td>
-      </tr>
-      <tr>
-        <td id="4"></td>
-        <td id="5"></td>
-        <td id="6"></td>
-      </tr>
-      <tr>/
-        <td id="7"></td>
-        <td id="8"></td>
-        <td id="9"></td>
-      </tr>
-    </table>
+    </head>
+
+    <body>
+
+        <div id="submit-name" class="container">
+
+          <form class="form-signin">
+            <h2 class="form-signin-heading text-center">Tick-Tack-Toe</h2>
+            <label for="inputUsername" class="sr-only">Username</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="Username" required autofocus>
+            <br>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Join Game</button>
+          </form>
+
+        </div>
+
+        <div class="container" style="display:none;">
+
+            <div class="row">
+              <div id="notifications">
+
+              </div>
+            </div>
+
+            <div class="row">
+                <div id="names">
+                    <h3 id="self"></h3>
+                    <h3 id="opponent"></h3>
+                </div>
+            </div>
+
+            <form action="" method="post">
+                <div class="form-group">
+                    <label for="username">Name</label>
+                    <input id="username" class="form-control" type="text" name="username">
+                </div>
+                <button type="button" class="btn btn-primary">Enter</button>
+            </form>
+
+            <table>
+              <tr>
+                <td id="1"></td>
+                <td id="2"></td>
+                <td id="3"></td>
+              </tr>
+              <tr>
+                <td id="4"></td>
+                <td id="5"></td>
+                <td id="6"></td>
+              </tr>
+              <tr>
+                <td id="7"></td>
+                <td id="8"></td>
+                <td id="9"></td>
+              </tr>
+            </table>
+
+        </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
@@ -50,7 +84,6 @@
       $(function () {
 
         $('table').hide();
-
         var socket = io();
 
         // user clicked box
@@ -62,12 +95,12 @@
         $('form').submit(function() {
           username = $('#username').val();
           socket.emit('login', {'username' : username} );
+          $('form').remove();
           return false;
         });
 
         // User logged in and load game
         socket.on('load', function() {
-          $('form').hide();
           $('table').show();
         });
 
@@ -98,6 +131,7 @@
         });
 
       });
+
     </script>
 
   </body>
