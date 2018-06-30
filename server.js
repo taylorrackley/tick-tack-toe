@@ -27,7 +27,7 @@ var findOpponent = function(socket) {
         symbols[oppenent.id] = 1;
         symbols[socket.id] = 2;
 
-        io.emit('load');
+        //io.emit('load');
 
         oppenent.emit('game-join', {'name' : names[socket.id], 'room_id' : room_id});
         socket.emit('game-join', {'name' : names[oppenent.id], 'room_id' : room_id});
@@ -68,6 +68,7 @@ io.on('connection', function(socket) {
         console.log("Username: "+data.username+" : Socket: "+socket.id);
 
         names[socket.id] = data.username;
+        io.to(socket.id).emit('load');
 
         findOpponent(socket);
     });

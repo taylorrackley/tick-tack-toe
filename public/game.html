@@ -32,46 +32,47 @@
             </div>
         </div>
 
-        <div class="container" style="display:none;">
+        <div id="game-container" class="container">
+            <div class="row justify-content-sm-center">
 
-            <div class="row">
-              <div id="notifications">
-
-              </div>
-            </div>
-
-            <div class="row">
-                <div id="names">
-                    <h3 id="self"></h3>
-                    <h3 id="opponent"></h3>
+                <div id="game-board" class="col-md-6">
+                    <table id="game-table">
+                      <tr>
+                        <td id="1"></td>
+                        <td id="2"></td>
+                        <td id="3"></td>
+                      </tr>
+                      <tr>
+                        <td id="4"></td>
+                        <td id="5"></td>
+                        <td id="6"></td>
+                      </tr>
+                      <tr>
+                        <td id="7"></td>
+                        <td id="8"></td>
+                        <td id="9"></td>
+                      </tr>
+                    </table>
                 </div>
-            </div>
 
-            <form action="" method="post">
-                <div class="form-group">
-                    <label for="username">Name</label>
-                    <input id="username" class="form-control" type="text" name="username">
+                <div class="col-md-6">
+
+                    <div class="row">
+                      <div id="notifications">
+
+                      </div>
+                    </div>
+
+                    <div class="row">
+                        <div id="names">
+                            <h3 id="self"></h3>
+                            <h3 id="opponent"></h3>
+                        </div>
+                    </div>
+
                 </div>
-                <button type="button" class="btn btn-primary">Enter</button>
-            </form>
 
-            <table>
-              <tr>
-                <td id="1"></td>
-                <td id="2"></td>
-                <td id="3"></td>
-              </tr>
-              <tr>
-                <td id="4"></td>
-                <td id="5"></td>
-                <td id="6"></td>
-              </tr>
-              <tr>
-                <td id="7"></td>
-                <td id="8"></td>
-                <td id="9"></td>
-              </tr>
-            </table>
+            </div>
 
         </div>
 
@@ -85,7 +86,6 @@
 
       $(function () {
 
-        $('table').hide();
         var socket = io();
 
         // user clicked box
@@ -95,7 +95,7 @@
         });
 
         $('form').submit(function() {
-          username = $('#username').val();
+          username = $('#inputUsername').val();
           socket.emit('login', {'username' : username} );
           $('form').remove();
           return false;
@@ -103,7 +103,7 @@
 
         // User logged in and load game
         socket.on('load', function() {
-          $('table').show();
+          $('#game-container').show();
         });
 
         // box has been clicked
