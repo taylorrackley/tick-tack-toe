@@ -58,15 +58,14 @@
                 <div class="col-md-6">
 
                     <div class="row">
-                      <div id="notifications">
-
-                      </div>
+                        <h3 id="names"></h3>
                     </div>
 
+                    <hr>
+
                     <div class="row">
-                        <div id="names">
-                            <h3 id="self"></h3>
-                            <h3 id="opponent"></h3>
+                        <div id="notifications" class="alert alert-secondary" role="alert">
+
                         </div>
                     </div>
 
@@ -104,6 +103,12 @@
         // User logged in and load game
         socket.on('load', function() {
           $('#game-container').show();
+          $('td').css('background-color', 'black');
+        });
+
+        // test stuff
+        socket.on('test', function() {
+          $('body').css('background-color', 'red');
         });
 
         // box has been clicked
@@ -116,14 +121,23 @@
             $('body').find('#'+data.box_id).css("background-color", color);
         });
 
-        // User joins game against oppenent
+        socket.on('player-turn', function(active_player) {
+            if(socket.id == active_player) {
+                $('#notifications').text("It's your turn!");
+            } else {
+                $('#notifications').text('It\'s '+opponent+'\'s turn!');
+            }
+        });
+
+        // User joins game against opponent
         socket.on('game-join', function(data) {
             opponent = data.name;
             room_id = data.room_id;
-            $('#self').text(username);
-            $('#opponent').text(opponent);
+            $('#names').text(username+" vs "+opponent);
+            //$('#notifications').show();
         });
 
+        // A player won the game
         socket.on('game-win', function(data) {
             if(socket.id == data.winner) {
                 alert("You Won!");
